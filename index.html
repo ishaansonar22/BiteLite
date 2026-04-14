@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiteLite - Body-State Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Ambient Background Elements -->
+    <div class="ambient-glow glow-cyan"></div>
+    <div class="ambient-glow glow-purple"></div>
+    <div class="ambient-glow glow-green"></div>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <i class="fa-solid fa-heart-pulse text-purple"></i>
+            <h1>BITELITE <span class="ai-badge" style="border-color:var(--purple); color:var(--purple)">BODY-STATE AI</span></h1>
+        </div>
+    </header>
+
+    <div class="dashboard-wrapper">
+        
+        <!-- LEFT PANEL: Input Form -->
+        <aside class="left-panel glass-card floating">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-microchip"></i> Telemetry Matrix</h2>
+                <p>Input dietary and biometrics</p>
+            </div>
+
+            <div class="input-section">
+                <!-- Food Input -->
+                <div class="glowing-input-wrapper">
+                    <textarea id="foodInput" placeholder="Enter Food... (e.g. Pasta with meatballs)" rows="2"></textarea>
+                    <div class="input-glow-border"></div>
+                </div>
+
+                <div class="context-grid mt-2">
+                    <div class="dropdown-wrapper">
+                        <label>Mental State</label>
+                        <select id="moodInput">
+                            <option value="neutral">Neutral</option>
+                            <option value="happy">Happy</option>
+                            <option value="stressed">Stressed</option>
+                        </select>
+                    </div>
+                    <div class="dropdown-wrapper">
+                        <label>Environment</label>
+                        <select id="contextInput">
+                            <option value="home">Home Base</option>
+                            <option value="work">Workspace</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Body Telemetry -->
+                <h4 style="color:var(--text-main); margin-top:15px; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-wave-square text-green"></i> Body Metrics
+                </h4>
+
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <div>
+                        <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:5px;">
+                            Daily Steps: <span id="stepsVal" style="color:var(--cyan)">8500</span>
+                        </label>
+                        <input type="range" id="stepsInput" min="0" max="25000" value="8500" style="width:100%; cursor:pointer;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:5px;">
+                            Heart Rate: <span id="hrVal" style="color:var(--cyan)">72 bpm</span>
+                        </label>
+                        <input type="range" id="hrInput" min="40" max="180" value="72" style="width:100%; cursor:pointer;">
+                    </div>
+                </div>
+
+                <div class="context-grid mt-2">
+                    <div class="dropdown-wrapper">
+                        <label>Activity Level</label>
+                        <select id="activityInput">
+                            <option value="sedentary">Sedentary</option>
+                            <option value="moderate" selected>Moderate</option>
+                            <option value="intense">High Intensity</option>
+                        </select>
+                    </div>
+                    <div class="dropdown-wrapper">
+                        <label>Recovery State</label>
+                        <select id="recoveryInput">
+                            <option value="fatigued">Fatigued</option>
+                            <option value="recovering" selected>Recovering</option>
+                            <option value="peaking">Peaking</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="analyzeBtn" class="neon-btn base-mode">
+                    <span class="btn-text">RUN SYNC ANALYSIS</span>
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- RIGHT PANEL: Results -->
+        <main class="right-panel">
+            
+            <!-- Default / Empty State -->
+            <div id="defaultState" class="state-container active-state">
+                <div class="idle-pulse">
+                    <i class="fa-solid fa-satellite-dish"></i>
+                </div>
+                <h3>SYSTEM STANDBY</h3>
+                <p>Awaiting body telemetry to establish sync ratio.</p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="state-container hidden">
+                <div class="neon-spinner"></div>
+                <h3 class="loading-text glow-text">Analyzing Physiology...</h3>
+                <p id="loadingSubtext">Correlating biometrics with caloric load...</p>
+            </div>
+
+            <!-- Results State -->
+            <div id="resultsState" class="results-container hidden">
+                
+                <!-- Chat Summary -->
+                <div class="ai-chat glow-card" style="border-left-color: var(--purple);">
+                    <div class="chat-header">
+                        <i class="fa-solid fa-robot text-purple"></i>
+                        <span>AI Executive Summary</span>
+                    </div>
+                    <p id="aiSummary" style="font-size:1.2rem;">Generating summary...</p>
+                </div>
+
+                <!-- 2-col Layout -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-top:1rem;">
+                    
+                    <!-- Body State Box -->
+                    <div class="glow-card border-cyan" style="padding:1.5rem;">
+                        <h4 style="color:#fff; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-child-reaching text-cyan"></i> Body State Profile
+                        </h4>
+                        <ul style="list-style:none; color:var(--text-muted); font-size:0.95rem; line-height:1.8;">
+                            <li><strong>Activity:</strong> <span id="outActivity" style="color:#fff">...</span></li>
+                            <li><strong>Heart Rate:</strong> <span id="outHR" style="color:#fff">...</span></li>
+                            <li><strong>Recovery:</strong> <span id="outRecovery" style="color:#fff">...</span></li>
+                            <li><strong>Status Overview:</strong> <span id="outStatus" style="color:#fff">...</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Sync Analysis Box -->
+                    <div class="glow-card border-green" style="padding:1.5rem;">
+                        <h4 style="color:#fff; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-arrows-spin text-green"></i> Sync Analysis
+                        </h4>
+                        <div style="margin-bottom:10px;">
+                            <span style="font-size:0.8rem; text-transform:uppercase; color:var(--text-muted);">Condition</span>
+                            <h3 id="outCondition" style="color:var(--green); font-size:1.4rem;">...</h3>
+                        </div>
+                        <p id="outReason" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;"></p>
+                        <p style="font-size:0.85rem; color:#e2e8f0;"><i class="fa-solid fa-bolt text-yellow"></i> <strong>Impact 1:</strong> <span id="outImpact1">...</span></p>
+                        <p style="font-size:0.85rem; color:#e2e8f0; margin-top:5px;"><i class="fa-solid fa-bolt text-yellow"></i> <strong>Impact 2:</strong> <span id="outImpact2">...</span></p>
+                    </div>
+
+                </div>
+
+                <!-- Interventions -->
+                <div class="smart-choices-section mt-4" style="background: rgba(30, 0, 50, 0.2);">
+                    <h3 class="section-title"><i class="fa-solid fa-kit-medical text-purple"></i> Interventions & Benefits</h3>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:10px;">
+                        
+                        <!-- Action 1 & Benefit 1 -->
+                        <div class="choice-card" style="border-left: 3px solid var(--cyan); display:block;">
+                            <span class="badge" style="background:rgba(0,240,255,0.2); color:var(--cyan); margin-bottom:8px; display:inline-block;">ACTION 1</span>
+                            <p id="outAction1" style="margin-bottom:10px;">...</p>
+                            <p style="font-size:0.85rem; color:var(--text-muted);"><i class="fa-solid fa-arrow-trend-up text-green"></i> <span id="outBenefit1">...</span></p>
+                        </div>
+
+                        <!-- Action 2 & Benefit 2 -->
+                        <div class="choice-card" style="border-left: 3px solid var(--purple); display:block;">
+                            <span class="badge" style="background:rgba(176,38,255,0.2); color:var(--purple); margin-bottom:8px; display:inline-block;">ACTION 2</span>
+                            <p id="outAction2" style="margin-bottom:10px;">...</p>
+                            <p style="font-size:0.85rem; color:var(--text-muted);"><i class="fa-solid fa-arrow-trend-up text-green"></i> <span id="outBenefit2">...</span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
